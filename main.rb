@@ -1,12 +1,10 @@
 require 'discordrb'
 require 'dotenv'
 require 'steam-api'
-require 'Date'
 
 Dotenv.load
 
-pp ENV["TOKEN"]
-pp ENV["CLIENT_ID"]
+Steam.apikey = ENV["STEAM_API_KEY"]
 
 bot = Discordrb::Commands::CommandBot.new(
   token: ENV["TOKEN"],
@@ -19,7 +17,6 @@ bot.command :hello do |event|
 end
 
 bot.command :two do |event|
-  Steam.apikey = ENV["STEAM_API_KEY"]
   data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
   sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
   hour, minute = sum_of_playtime.divmod(60)
@@ -34,5 +31,14 @@ end
 #   playtime_diff += "+" if playtime_diff.positive?
 #   event.send_message("#{playtime_diff}分")
 # end
+
+bot.command :twogame do |event|
+  data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
+  games = []
+  data.each do |d|
+    games << {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]}
+  end
+  pp games
+end
 
 bot.run
