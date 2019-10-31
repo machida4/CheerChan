@@ -35,10 +35,24 @@ end
 bot.command :twogame do |event|
   data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
   games = []
-  data.each do |d|
-    games << {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]}
+  games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
+  result = ""
+  games.each do |game|
+    game_name = game[:name]
+    hour = game[:playtime_2weeks].divmod(60)[0]
+    minute = game[:playtime_2weeks].divmod(60)[1]
+    result << "#{game_name}\n"
+    result << ":arrow_upper_right: #{hour}時間#{minute}分\n"
   end
-  pp games
+  event.send_message(result)
 end
 
 bot.run
+
+# TODO:1日おきにDBに保存するなりなんなりしてdiffをとれるようにする, emojiで増減がわかりやすくする
+# :arrow_up:
+# :arrow_upper_right:
+# :arrow_right:
+# :arrow_lower_right:
+# :arrow_down:
+# TODO:リファクタリング
