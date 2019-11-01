@@ -1,7 +1,8 @@
 require 'discordrb'
 require 'dotenv'
 require 'steam-api'
-
+require 'active_record'
+require_relative 'user'
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
