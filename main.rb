@@ -4,7 +4,8 @@ require 'steam-api'
 require 'active_record'
 require_relative 'user'
 require_relative 'playtime'
-require 'Date'
+require 'date'
+
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
