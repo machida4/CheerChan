@@ -55,7 +55,7 @@ bot.command :diff do |event|
 
   data = Steam::Player.recently_played_games(user.steamid)["games"]
   current_games = {}
-  data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
+  data.each { |d| current_games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
   previous_games = Playtime.order(created_at: :desc).take.game_playtime_hash
   current_games.each do |appid, hash|
     game_name = hash[:name]
