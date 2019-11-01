@@ -21,7 +21,8 @@ bot.command :hello do |event|
 end
 
 bot.command :two do |event|
-  data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
+  user = User.find_by(discordid: event.user.id)
+  data = Steam::Player.recently_played_games(user.steamid)["games"]
   sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
   hour, minute = sum_of_playtime.divmod(60)
   event.send_message("#{hour}時間#{minute}分")
@@ -91,6 +92,7 @@ bot.command :setid do |event, steam_id|
     user = User.new(discordid: event.user.id, steamid: steam_id)
     user.save!
   end
+  "hello, #{event.user.name}!"
 end
 
 # bot.heartbeat do |event|
