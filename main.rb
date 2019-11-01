@@ -46,6 +46,20 @@ bot.command :detail do |event|
   return nil
 end
 
+bot.command :diff do |event|
+  user = User.find_by(discordid: event.user.id)
+  if user.nil?
+    event << "まず「meu setid (steamid)」コマンドでSteamのIDを登録してね！"
+    return nil
+  end
+  data = Steam::Player.recently_played_games(user.steamid)["games"]
+  games = {}
+  games = data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
+  playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
+  playtime.save!
+  return nil
+end
+
 bot.command :setid do |event, steam_id|
   if user = User.find_by(discordid: event.user.id)
     User.update!(steamid: steam_id)
@@ -54,7 +68,6 @@ bot.command :setid do |event, steam_id|
     user.save!
   end
 end
-
 
 bot.run
 
