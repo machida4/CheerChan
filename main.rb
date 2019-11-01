@@ -32,14 +32,14 @@ bot.command :detail do |event|
     return nil
   end
   data = Steam::Player.recently_played_games(user.steamid)["games"]
-  games = []
-  games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
+  games = {}
+  data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
   playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
   playtime.save!
-  games.each do |game|
-    game_name = game[:name]
-    hour = game[:playtime_2weeks].divmod(60)[0]
-    minute = game[:playtime_2weeks].divmod(60)[1]
+  games.each do |appid, hash|
+    game_name = hash[:name]
+    hour = hash[:playtime_2weeks].divmod(60)[0]
+    minute = hash[:playtime_2weeks].divmod(60)[1]
     event << "**#{game_name}**"
     event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
   end
@@ -52,12 +52,20 @@ bot.command :diff do |event|
     event << "まず「meu setid (steamid)」コマンドでSteamのIDを登録してね！"
     return nil
   end
+
   data = Steam::Player.recently_played_games(user.steamid)["games"]
-  games = {}
+  current_games = {}
   data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
-  playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
-  playtime.save!
-  event << Playtime.order(created_at: :desc).take.game_playtime_hash
+  previous_games = Playtime.order(created_at: :desc).take.game_playtime_hash
+  current_games.each do |appid, hash|
+    game_name = hash[:name]
+    hour = hash[:playtime_2weeks].divmod(60)[0]
+    minute = hash[:playtime_2weeks].divmod(60)[1]
+    diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
+    event << "**#{game_name}**"
+    event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+    event << "diff: #{diff}"
+  end
   return nil
 end
 
