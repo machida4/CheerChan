@@ -91,10 +91,6 @@ bot.command :setid do |event, steam_id|
   end
 end
 
-bot.heartbeat do |event|
-  bot.send_message("てすと")
-end
-
 bot.run
 
 # TODO:1日おきにDBに保存するなりなんなりしてdiffをとれるようにする, emojiで増減がわかりやすくする
