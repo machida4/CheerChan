@@ -32,7 +32,7 @@ end
 #   event.send_message("#{playtime_diff}分")
 # end
 
-bot.command :twogame do |event|
+bot.command :detail do |event|
   data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
   games = []
   games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
@@ -42,7 +42,7 @@ bot.command :twogame do |event|
     hour = game[:playtime_2weeks].divmod(60)[0]
     minute = game[:playtime_2weeks].divmod(60)[1]
     result << "#{game_name}\n"
-    result << ":arrow_upper_right: #{hour}時間#{minute}分\n"
+    result << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分\n"
   end
   event.send_message(result)
 end
