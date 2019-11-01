@@ -93,10 +93,45 @@ bot.command :setid do |event, steam_id|
   end
 end
 
-bot.heartbeat do |event|
-  bot.send_message(500072406509944854, "てすと")
-  previous = now
-end
+# bot.heartbeat do |event|
+#   users = User.all
+#   users.each do |user|
+#     data = Steam::Player.recently_played_games(user.steamid)["games"]
+#     games = {}
+#     data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
+#     playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
+#     current_sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
+#     previous_games = Playtime.order(created_at: :desc).take.game_playtime_hash
+#     playtime.save!
+
+#     message = ""
+#     message << current_sum_of_playtime
+#     message << "\n"
+#     message << 
+
+#     current_games.each do |appid, hash|
+#       game_name = hash[:name]
+#       hour = hash[:playtime_2weeks].divmod(60)[0]
+#       minute = hash[:playtime_2weeks].divmod(60)[1]
+#       if !previous_games.key? appid
+#         diff = "＋" + hash[:playtime_2weeks].to_s
+#       else
+#         diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
+#         if diff > 0
+#           diff = "＋" + diff.to_s
+#         elsif diff = 0
+#           diff = "±" + diff.to_s
+#         else
+#           next
+#         end
+#       end
+#       message << "**#{game_name}**"
+#       message << " #{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
+#     end
+      
+#   end
+#   bot.send_message(ENV["CHANNEL_ID"], "てすと")
+# end
 
 bot.run
 
