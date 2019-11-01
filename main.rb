@@ -4,6 +4,7 @@ require 'steam-api'
 require 'active_record'
 require_relative 'user'
 require_relative 'playtime'
+require 'Date'
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
@@ -61,10 +62,8 @@ bot.command :diff do |event|
     game_name = hash[:name]
     hour = hash[:playtime_2weeks].divmod(60)[0]
     minute = hash[:playtime_2weeks].divmod(60)[1]
-    diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
-    event << "**#{game_name}**"
     if !previous_games.key? appid
-      emoji = ":arrow_up:"
+      emoji = ":arrow_up"
     else
       if diff > 0
         emoji = ":arrow_upper_right:"
@@ -74,6 +73,8 @@ bot.command :diff do |event|
         emoji = ":arrow_lower_right:"
       end
     end
+    diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
+    event << "**#{game_name}**"
     event << "#{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
     event << "diff: #{diff}"
   end
@@ -87,6 +88,14 @@ bot.command :setid do |event, steam_id|
     user = User.new(discordid: event.user.id, steamid: steam_id)
     user.save!
   end
+end
+
+previous = Date.today
+
+bot.heartbeat do |event|
+  now = Date.today
+  bot.send_message("てすと")
+  previous = now
 end
 
 bot.run
