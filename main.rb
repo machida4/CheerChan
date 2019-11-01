@@ -79,7 +79,7 @@ bot.command :diff do |event|
       end
     end
     event << "**#{game_name}**"
-    event << "#{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
+    event << " #{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
   end
   return nil
 end
@@ -91,6 +91,11 @@ bot.command :setid do |event, steam_id|
     user = User.new(discordid: event.user.id, steamid: steam_id)
     user.save!
   end
+end
+
+bot.heartbeat do |event|
+  bot.send_message(500072406509944854, "てすと")
+  previous = now
 end
 
 bot.run
