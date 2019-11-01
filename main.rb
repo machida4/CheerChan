@@ -14,7 +14,7 @@ bot = Discordrb::Commands::CommandBot.new(
 )
 
 bot.command :hello do |event|
-  event.send_message("hello,world.#{event.user.name}")
+  "hello, #{event.user.name}!"
 end
 
 bot.command :two do |event|
@@ -32,7 +32,7 @@ bot.command :detail do |event|
     game_name = game[:name]
     hour = game[:playtime_2weeks].divmod(60)[0]
     minute = game[:playtime_2weeks].divmod(60)[1]
-    event << "#{game_name}"
+    event << "**#{game_name}**"
     event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
   end
   return nil
