@@ -2,7 +2,7 @@ require 'discordrb'
 require 'dotenv'
 require 'steam-api'
 require 'active_record'
-require_relative 'user'
+# require_relative 'user'
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
@@ -28,21 +28,20 @@ bot.command :detail do |event|
   data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
   games = []
   games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
-  result = ""
   games.each do |game|
     game_name = game[:name]
     hour = game[:playtime_2weeks].divmod(60)[0]
     minute = game[:playtime_2weeks].divmod(60)[1]
-    result << "#{game_name}\n"
-    result << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分\n"
+    event << "#{game_name}"
+    event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
   end
-  event.send_message(result)
+  return nil
 end
 
-bot.command :setid do |event, steam_id|
-  user = User.new(tag: event.user.tag, steamid: steam_id)
-  user.create!
-end
+# bot.command :setid do |event, steam_id|
+#   user = User.new(tag: event.user.tag, steamid: steam_id)
+#   user.create!
+# end
 
 
 bot.run
