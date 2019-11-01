@@ -91,12 +91,8 @@ bot.command :setid do |event, steam_id|
   end
 end
 
-previous = Date.today
-
 bot.heartbeat do |event|
-  now = Date.today
   bot.send_message("てすと")
-  previous = now
 end
 
 bot.run
