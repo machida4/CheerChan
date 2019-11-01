@@ -3,6 +3,7 @@ require 'dotenv'
 require 'steam-api'
 require 'active_record'
 require_relative 'user'
+require_relative 'playtime'
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
@@ -10,7 +11,7 @@ Steam.apikey = ENV["STEAM_API_KEY"]
 bot = Discordrb::Commands::CommandBot.new(
   token: ENV["TOKEN"],
   client_id: ENV["CLIENT_ID"],
-  prefix:'meu',
+  prefix:'meu ',
 )
 
 bot.command :hello do |event|
@@ -33,6 +34,8 @@ bot.command :detail do |event|
   data = Steam::Player.recently_played_games(user.steamid)["games"]
   games = []
   games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
+  playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
+  playtime.save!
   games.each do |game|
     game_name = game[:name]
     hour = game[:playtime_2weeks].divmod(60)[0]
