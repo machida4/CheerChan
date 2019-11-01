@@ -10,7 +10,7 @@ Steam.apikey = ENV["STEAM_API_KEY"]
 bot = Discordrb::Commands::CommandBot.new(
   token: ENV["TOKEN"],
   client_id: ENV["CLIENT_ID"],
-  prefix:'#',
+  prefix:'meu',
 )
 
 bot.command :hello do |event|
@@ -25,7 +25,12 @@ bot.command :two do |event|
 end
 
 bot.command :detail do |event|
-  data = Steam::Player.recently_played_games(ENV["STEAM_ID"])["games"]
+  user = User.find_by(discordid: event.user.id)
+  if user.nil?
+    event << "まず「meu setid (steamid)」コマンドでSteamのIDを登録してね！"
+    return nil
+  end
+  data = Steam::Player.recently_played_games(user.steamid)["games"]
   games = []
   games = data.map { |d| {name: d["name"], appid: d["appid"], playtime_2weeks: d["playtime_2weeks"]} }
   games.each do |game|
