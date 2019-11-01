@@ -2,7 +2,7 @@ require 'discordrb'
 require 'dotenv'
 require 'steam-api'
 require 'active_record'
-# require_relative 'user'
+require_relative 'user'
 Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
@@ -14,7 +14,7 @@ bot = Discordrb::Commands::CommandBot.new(
 )
 
 bot.command :hello do |event|
-  "hello, #{event.user.name}!"
+  "hello, #{event.user.id}!"
 end
 
 bot.command :two do |event|
@@ -38,10 +38,14 @@ bot.command :detail do |event|
   return nil
 end
 
-# bot.command :setid do |event, steam_id|
-#   user = User.new(tag: event.user.tag, steamid: steam_id)
-#   user.create!
-# end
+bot.command :setid do |event, steam_id|
+  if user = User.find_by(discordid: event.user.id)
+    User.update!(steamid: steam_id)
+  else
+    user = User.new(discordid: event.user.id, steamid: steam_id)
+    user.save!
+  end
+end
 
 
 bot.run
