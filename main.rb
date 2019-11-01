@@ -57,7 +57,7 @@ bot.command :diff do |event|
   data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
   playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
   playtime.save!
-  event << Playtime..order(created_at: :desc).take.game_playtime_hash
+  event << Playtime.order(created_at: :desc).take.game_playtime_hash
   return nil
 end
 
