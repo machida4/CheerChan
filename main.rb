@@ -68,16 +68,18 @@ bot.command :diff do |event|
     else
       diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
       if diff > 0
+        diff = "＋" + diff.to_s
         emoji = ":arrow_upper_right:"
       elsif diff = 0
         emoji = ":arrow_right:"
+        diff = "±" + diff.to_s
       else
         emoji = ":arrow_lower_right:"
+        diff = "－" + diff.to_s
       end
     end
     event << "**#{game_name}**"
-    event << "#{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
-    event << "diff: #{diff}"
+    event << "#{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
   end
   return nil
 end
