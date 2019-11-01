@@ -63,7 +63,18 @@ bot.command :diff do |event|
     minute = hash[:playtime_2weeks].divmod(60)[1]
     diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
     event << "**#{game_name}**"
-    event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+    if !previous_games.key? appid
+      emoji = ":arrow_up:"
+    else
+      if diff > 0
+        emoji = ":arrow_upper_right:"
+      elsif diff = 0
+        emoji = ":arrow_right:"
+      else
+        emoji = ":arrow_lower_right:"
+      end
+    end
+    event << "#{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
     event << "diff: #{diff}"
   end
   return nil
