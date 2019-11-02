@@ -10,11 +10,6 @@ Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
 
-module Steam
-  module Player
-  end
-end
-
 bot = Discordrb::Commands::CommandBot.new(
   token: ENV["TOKEN"],
   client_id: ENV["CLIENT_ID"],
@@ -34,7 +29,7 @@ bot.command :debug do |event|
 
     current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
     current_playtime.save!
-    message = "#{user.discordid}さん/n"
+    message = ""
     sum_of_playtime = 0
     current_games.each do |appid, hash|
       if !previous_games.key? appid
@@ -52,7 +47,7 @@ bot.command :debug do |event|
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
-    message = "今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分/n" + message
+    message = "#{user.discordid}さんの今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分\n" + message
     event.send_message(message)
   end
   return nil
@@ -80,46 +75,6 @@ bot.command :setid do |event, steam_id|
   "hello, #{event.user.name}!"
 end
 
-# bot.heartbeat do |event|
-#   users = User.all
-#   users.each do |user|
-#     data = Steam::Player.recently_played_games(user.steamid)["games"]
-#     games = {}
-#     data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
-#     playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
-#     current_sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
-#     previous_games = Playtime.order(created_at: :desc).take.game_playtime_hash
-#     playtime.save!
-
-#     message = ""
-#     message << current_sum_of_playtime
-#     message << "\n"
-#     message << 
-
-#     current_games.each do |appid, hash|
-#       game_name = hash[:name]
-#       hour = hash[:playtime_2weeks].divmod(60)[0]
-#       minute = hash[:playtime_2weeks].divmod(60)[1]
-#       if !previous_games.key? appid
-#         diff = "＋" + hash[:playtime_2weeks].to_s
-#       else
-#         diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
-#         if diff > 0
-#           diff = "＋" + diff.to_s
-#         elsif diff = 0
-#           diff = "±" + diff.to_s
-#         else
-#           next
-#         end
-#       end
-#       message << "**#{game_name}**"
-#       message << " #{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
-#     end
-      
-#   end
-#   bot.send_message(ENV["CHANNEL_ID"], "てすと")
-# end
-
 bot.run
 
 # TODO:1日おきにDBに保存するなりなんなりしてdiffをとれるようにする, emojiで増減がわかりやすくする
@@ -129,13 +84,3 @@ bot.run
 # :arrow_lower_right:
 # :arrow_down:
 # TODO:リファクタリング
-
-
-# bot.command :two_diff do |event|
-#   previous_sum_of_playtime = 5000
-#   current_sum_of_playtime = 3000
-#   playtime_diff = current_sum_of_playtime - previous_sum_of_playtime
-#   playtime_diff = playtime_diff.to_s
-#   playtime_diff += "+" if playtime_diff.positive?
-#   event.send_message("#{playtime_diff}分")
-# end
