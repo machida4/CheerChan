@@ -34,7 +34,7 @@ bot.command :debug do |event|
     message << "**#{hash["name"]}**"
     message << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
   end
-  message(0..1999)
+  message[0..1999]
 end
 
 bot.command :hello do |event|
