@@ -47,9 +47,7 @@ bot.command :debug do |event|
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
-    message = "#{user.discordid}さんの今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分\n"
-            + "------------------------------------------\n"
-            + detail
+    message = "#{user.name}さんの今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分\n" + detail
     event.send_message(message)
     sleep(2)
   end
@@ -70,9 +68,9 @@ end
 
 bot.command :setid do |event, steam_id|
   if user = User.find_by(discordid: event.user.id)
-    User.update!(steamid: steam_id)
+    User.update!(steamid: steam_id, name: event.user.name)
   else
-    user = User.new(discordid: event.user.id, steamid: steam_id)
+    user = User.new(discordid: event.user.id, steamid: steam_id, name: event.user.name)
     user.save!
   end
   "hello, #{event.user.name}!"
