@@ -63,14 +63,6 @@ bot.command :hello do |event|
   "hello, #{event.user.id}!"
 end
 
-bot.command :two do |event|
-  user = User.find_by(discordid: event.user.id)
-  data = Steam::Player.recently_played_games(user.steamid)["games"]
-  sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
-  hour, minute = sum_of_playtime.divmod(60)
-  event.send_message("#{hour}時間#{minute}分")
-end
-
 bot.command :setid do |event, steam_id|
   if user = User.find_by(discordid: event.user.id)
     User.update!(steamid: steam_id, name: event.user.name)
@@ -82,6 +74,15 @@ bot.command :setid do |event, steam_id|
 end
 
 bot.run
+
+
+# bot.command :two do |event|
+#   user = User.find_by(discordid: event.user.id)
+#   data = Steam::Player.recently_played_games(user.steamid)["games"]
+#   sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
+#   hour, minute = sum_of_playtime.divmod(60)
+#   event.send_message("#{hour}時間#{minute}分")
+# end
 
 # TODO:1日おきにDBに保存するなりなんなりしてdiffをとれるようにする, emojiで増減がわかりやすくする
 # :arrow_up:
