@@ -25,11 +25,12 @@ bot.command :debug do |event|
       next if d["playtime_forever"] == 0
       current_games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]}
     end
-    unless previous_games = Playtime.where(steamid: user.steamid).order(created_at: :desc).take.game_playtime_hash
+    unless Playtime.where(steamid: user.steamid)
       current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
       current_playtime.save!
       next
     end
+    previous_games = Playtime.where(steamid: user.steamid).order(created_at: :desc).take.game_playtime_hash
     current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
     current_playtime.save!
     detail = ""
