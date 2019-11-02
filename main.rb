@@ -51,7 +51,7 @@ bot.command :debug do |event|
             + "------------------------------------------"
             + message
     event.send_message(message)
-    sleep(0.5)
+    sleep(2)
   end
   return nil
 end
