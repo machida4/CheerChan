@@ -57,7 +57,6 @@ bot.heartbeat do |event|
     bot.send_message(ENV["CHANNEL_ID"], message)
     sleep(2)
   end
-  return nil
 end
 
 bot.command :hello do |event|
