@@ -48,7 +48,7 @@ bot.command :debug do |event|
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
     message = "#{user.discordid}さんの今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分\n"
-            + "------------------------------------------"
+            + "------------------------------------------/n"
             + message
     event.send_message(message)
     sleep(2)
