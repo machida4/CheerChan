@@ -15,8 +15,10 @@ bot = Discordrb::Commands::CommandBot.new(
   client_id: ENV["CLIENT_ID"],
   prefix:'meu ',
 )
+previous = Date.today
 
-bot.command :debug do |event|
+bot.heartbeat do |event|
+  now = Date.today
   User.all.each do |user|
     data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
 
