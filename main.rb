@@ -24,7 +24,6 @@ bot = Discordrb::Commands::CommandBot.new(
 bot.command :debug do |event|
   user = User.find_by(discordid: event.user.id)
   data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
-  pp data
 
   current_games = {}
   data.each do |d|
@@ -32,6 +31,8 @@ bot.command :debug do |event|
     current_games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]}
   end
   previous_games = Playtime.where(steamid: user.steamid).order(created_at: :desc).take.game_playtime_hash
+
+  pp current_games
 
   current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
   current_playtime.save!
@@ -43,9 +44,13 @@ bot.command :debug do |event|
     else
       diff = hash[:playtime_forever] - previous_games[appid][:playtime_forever]
     end
-    message << "**#{hash[:name]}**\n"
-    message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
-    message << "(#{diff}分)"
+    if diff == 0
+      next
+    else
+      message << "**#{hash[:name]}**\n"
+      message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+      message << "(#{diff}分)"
+    end
   end
   pp message
   message
