@@ -19,6 +19,9 @@ previous = Date.today
 
 bot.heartbeat do |event|
   now = Date.today
+  break unless previous < now
+  previous = now
+
   User.all.each do |user|
     data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
 
