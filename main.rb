@@ -47,6 +47,8 @@ bot.command :debug do |event|
     message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
     message << "(#{diff}分)"
   end
+  pp message
+  message
 end
 
 bot.command :hello do |event|
