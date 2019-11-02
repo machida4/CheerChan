@@ -29,7 +29,7 @@ bot.command :debug do |event|
 
     current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
     current_playtime.save!
-    message = ""
+    detail = ""
     sum_of_playtime = 0
     current_games.each do |appid, hash|
       if !previous_games.key? appid
@@ -42,14 +42,14 @@ bot.command :debug do |event|
       else
         hour, minute = diff.divmod(60)[0], diff.divmod(60)[1]
         sum_of_playtime += diff
-        message << "**#{hash[:name]}**\n"
-        message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+        detail << "**#{hash[:name]}**\n"
+        detail << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分\n"
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
     message = "#{user.discordid}さんの今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分\n"
             + "------------------------------------------\n"
-            + message
+            + detail
     event.send_message(message)
     sleep(2)
   end
