@@ -24,18 +24,29 @@ bot = Discordrb::Commands::CommandBot.new(
 bot.command :debug do |event|
   user = User.find_by(discordid: event.user.id)
   data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
-  games = {}
   pp data
-  data.each { |d| games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]} }
-  playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
-  playtime.save!
-  message = ""
-  games.each do |appid, hash|
-    hour, minute = hash[:playtime_forever].divmod(60)[0], hash[:playtime_forever].divmod(60)[1]
-    message << "**#{hash[:name]}**"
-    message << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+
+  current_games = {}
+  data.each do |d|
+    next if d["playtime_forever"] == 0
+    current_games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]}
   end
-  message[0..1999]
+  previous_games = Playtime.find_by(steamid: user.steamid).order(created_at: :desc).take.game_playtime_hash
+
+  current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
+  current_playtime.save!
+  message = ""
+  current_games.each do |appid, hash|
+    hour, minute = hash[:playtime_forever].divmod(60)[0], hash[:playtime_forever].divmod(60)[1]
+    if !previous_games.key? appid
+      diff = hash[:playtime_forever]
+    else
+      diff = hash[:playtime_forever] - previous_games[appid][:playtime_forever]
+    end
+    message << "**#{hash[:name]}**\n"
+    message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
+    message << "(#{diff}分)"
+  end
 end
 
 bot.command :hello do |event|
@@ -49,26 +60,6 @@ bot.command :two do |event|
   hour, minute = sum_of_playtime.divmod(60)
   event.send_message("#{hour}時間#{minute}分")
 end
-
-# bot.command :detail do |event|
-#   user = User.find_by(discordid: event.user.id)
-#   if user.nil?
-#     event << "まず「meu setid (steamid)」でSteamのIDを登録してね！"
-#     return nil
-#   end
-#   games = {}
-#   data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
-#   playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
-#   playtime.save!
-#   games.each do |appid, hash|
-#     game_name = hash[:name]
-#     hour = hash[:playtime_2weeks].divmod(60)[0]
-#     minute = hash[:playtime_2weeks].divmod(60)[1]
-#     event << "**#{game_name}**"
-#     event << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
-#   end
-#   return nil
-# end
 
 bot.command :diff do |event|
   user = User.find_by(discordid: event.user.id)
