@@ -23,7 +23,7 @@ bot = Discordrb::Commands::CommandBot.new(
 
 bot.command :debug do |event|
   user = User.find_by(discordid: event.user.id)
-  data = Steam::Player.owned_games(user.steamid, params: {include_played_free_games:true})["games"]
+  data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
   pp data
 end
 
