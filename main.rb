@@ -30,7 +30,7 @@ bot.command :debug do |event|
   playtime.save!
   message = ""
   games.each do |appid, hash|
-    hour, minute = hash[:playtime_2weeks].divmod(60)[0], hash[:playtime_2weeks].divmod(60)[1]
+    hour, minute = hash[:playtime_forever].divmod(60)[0], hash[:playtime_forever].divmod(60)[1]
     message << "**#{hash["name"]}**"
     message << ":arrow_upper_right: #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
   end
