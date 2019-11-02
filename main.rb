@@ -38,7 +38,6 @@ bot.command :debug do |event|
   current_playtime.save!
   message = ""
   current_games.each do |appid, hash|
-    hour, minute = hash[:playtime_forever].divmod(60)[0], hash[:playtime_forever].divmod(60)[1]
     if !previous_games.key? appid
       diff = hash[:playtime_forever]
     else
@@ -47,9 +46,9 @@ bot.command :debug do |event|
     if diff == 0
       next
     else
+      hour, minute = diff.divmod(60)[0], diff.divmod(60)[1]
       message << "**#{hash[:name]}**\n"
-      message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分"
-      message << "(#{diff}分)"
+      message << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分/n"
     end
   end
   pp message
