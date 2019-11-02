@@ -19,6 +19,7 @@ previous = Date.today
 
 bot.heartbeat do |event|
   now = Date.today
+  pp "ok!"
   next unless previous < now
   previous = now
 
