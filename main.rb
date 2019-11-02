@@ -34,7 +34,7 @@ bot.command :debug do |event|
 
     current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
     current_playtime.save!
-    message = ""
+    message = "#{user.discordid}さん/n"
     sum_of_playtime = 0
     current_games.each do |appid, hash|
       if !previous_games.key? appid
@@ -52,7 +52,7 @@ bot.command :debug do |event|
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
-    message = "今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分" + message
+    message = "今日のプレイ時間: #{sum_hour.to_s.rjust(2, '0')}時間#{sum_minute.to_s.rjust(2, '0')}分/n" + message
     event.send_message(message)
   end
   return nil
@@ -68,42 +68,6 @@ bot.command :two do |event|
   sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
   hour, minute = sum_of_playtime.divmod(60)
   event.send_message("#{hour}時間#{minute}分")
-end
-
-bot.command :diff do |event|
-  user = User.find_by(discordid: event.user.id)
-  if user.nil?
-    event << "まず「meu setid (steamid)」コマンドでSteamのIDを登録してね！"
-    return nil
-  end
-
-  data = Steam::Player.recently_played_games(user.steamid)["games"]
-  current_games = {}
-  data.each { |d| current_games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
-  previous_games = Playtime.order(created_at: :desc).take.game_playtime_hash
-  current_games.each do |appid, hash|
-    game_name = hash[:name]
-    hour = hash[:playtime_2weeks].divmod(60)[0]
-    minute = hash[:playtime_2weeks].divmod(60)[1]
-    if !previous_games.key? appid
-      emoji = ":arrow_up"
-    else
-      diff = hash[:playtime_2weeks] - previous_games[appid][:playtime_2weeks]
-      if diff > 0
-        diff = "＋" + diff.to_s
-        emoji = ":arrow_upper_right:"
-      elsif diff = 0
-        emoji = ":arrow_right:"
-        diff = "±" + diff.to_s
-      else
-        emoji = ":arrow_lower_right:"
-        diff = "－" + diff.to_s
-      end
-    end
-    event << "**#{game_name}**"
-    event << " #{emoji} #{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分(#{diff}分)"
-  end
-  return nil
 end
 
 bot.command :setid do |event, steam_id|
