@@ -19,13 +19,11 @@ previous = Date.today
 
 bot.heartbeat do |event|
   now = Date.today
-  pp "ok!"
   next unless previous < now
   previous = now
 
   User.all.each do |user|
     data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
-
     current_games = {}
     data.each do |d|
       next if d["playtime_forever"] == 0
