@@ -19,7 +19,7 @@ previous = Date.today
 
 bot.heartbeat do |event|
   now = Date.today
-  break unless previous < now
+  next unless previous < now
   previous = now
 
   User.all.each do |user|
