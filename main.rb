@@ -25,6 +25,7 @@ bot.command :debug do |event|
       next if d["playtime_forever"] == 0
       current_games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]}
     end
+    pp Playtime.where(steamid: user.steamid)
     unless Playtime.where(steamid: user.steamid)
       current_playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: current_games)
       current_playtime.save!
