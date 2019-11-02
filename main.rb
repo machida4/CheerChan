@@ -25,6 +25,7 @@ bot.command :debug do |event|
   user = User.find_by(discordid: event.user.id)
   data = Steam::Player.owned_games(user.steamid, params: {include_appinfo:true, include_played_free_games:true})["games"]
   games = {}
+  pp data
   data.each { |d| games[d["appid"]] = {name: d["name"], playtime_forever: d["playtime_forever"]} }
   playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
   playtime.save!
