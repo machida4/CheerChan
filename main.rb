@@ -46,15 +46,12 @@ bot.command :debug do |event|
       else
         hour, minute = diff.divmod(60)[0], diff.divmod(60)[1]
         sum_of_playtime += diff
-        detail << "**#{hash[:name]}**\n"
-        detail << "#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分\n"
+        detail << "--**#{hash[:name]}**\n"
+        detail << "----#{hour.to_s.rjust(2, '0')}時間#{minute.to_s.rjust(2, '0')}分\n"
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
-    message = "**#{user.name}** の今日のプレイ時間は **#{sum_hour.to_s.rjust(2, '0')}**時間**#{sum_minute.to_s.rjust(2, '0')}分** めう！\n" 
-            + "~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-            + detail
-            + "~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+    message = "**#{user.name}** の今日のプレイ時間は **#{sum_hour.to_s.rjust(2, '0')}**時間**#{sum_minute.to_s.rjust(2, '0')}分** めう！\n" + detail
     event.send_message(message)
     sleep(2)
   end
