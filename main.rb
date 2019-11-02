@@ -10,11 +10,22 @@ Dotenv.load
 
 Steam.apikey = ENV["STEAM_API_KEY"]
 
+module Steam
+  module Player
+  end
+end
+
 bot = Discordrb::Commands::CommandBot.new(
   token: ENV["TOKEN"],
   client_id: ENV["CLIENT_ID"],
   prefix:'meu ',
 )
+
+bot.command :debug do |event|
+  user = User.find_by(discordid: event.user.id)
+  data = Steam::Player.self.owned_games(user.steamid, include_played_free_games : true)["games"]
+  pp data
+end
 
 bot.command :hello do |event|
   "hello, #{event.user.id}!"
@@ -31,10 +42,9 @@ end
 bot.command :detail do |event|
   user = User.find_by(discordid: event.user.id)
   if user.nil?
-    event << "まず「meu setid (steamid)」コマンドでSteamのIDを登録してね！"
+    event << "まず「meu setid (steamid)」でSteamのIDを登録してね！"
     return nil
   end
-  data = Steam::Player.recently_played_games(user.steamid)["games"]
   games = {}
   data.each { |d| games[d["appid"]] = {name: d["name"], playtime_2weeks: d["playtime_2weeks"]} }
   playtime = Playtime.new(steamid: user.steamid, game_playtime_hash: games)
