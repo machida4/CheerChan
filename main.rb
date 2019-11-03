@@ -55,7 +55,7 @@ bot.heartbeat do |event|
       end
     end
     sum_hour, sum_minute = sum_of_playtime.divmod(60)[0], sum_of_playtime.divmod(60)[1]
-    message = "**#{user.name}** の今日のプレイ時間は **#{sum_hour.to_s.rjust(2, '0')}**時間**#{sum_minute.to_s.rjust(2, '0')}分** めう！:meu:\n" + detail
+    message = "**#{user.name}** の今日のプレイ時間は **#{sum_hour.to_s.rjust(2, '0')}**時間**#{sum_minute.to_s.rjust(2, '0')}分** めう！\n" + detail
     bot.send_message(ENV["CHANNEL_ID"], message)
     sleep(2)
   end
