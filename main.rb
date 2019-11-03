@@ -77,7 +77,7 @@ end
 
 bot.command :rand do |event, *args|
   sleep(2)
-  agrs.uniq!
+  args.uniq!
   result = args.sample.to_s
   event.send_message("👉" + result)
 end
