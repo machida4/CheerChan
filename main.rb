@@ -62,7 +62,7 @@ bot.heartbeat do |event|
 end
 
 bot.command :hello do |event|
-  "hello, #{event.user.id}!"
+  "hello, #{event.user.id}!!"
 end
 
 bot.command :setid do |event, steam_id|
