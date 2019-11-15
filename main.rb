@@ -1,3 +1,8 @@
+# デプロイ
+#1 git push heroku master
+#2 heroku restart bot.1
+# heroku psで起動中のプロセス確認できる
+
 require 'discordrb'
 require 'dotenv'
 require 'steam-api'
@@ -83,20 +88,3 @@ bot.command :rand do |event, *args|
 end
 
 bot.run
-
-
-# bot.command :two do |event|
-#   user = User.find_by(discordid: event.user.id)
-#   data = Steam::Player.recently_played_games(user.steamid)["games"]
-#   sum_of_playtime = data.inject(0){ |sum, d| sum + d["playtime_2weeks"]}
-#   hour, minute = sum_of_playtime.divmod(60)
-#   event.send_message("#{hour}時間#{minute}分")
-# end
-
-# TODO:1日おきにDBに保存するなりなんなりしてdiffをとれるようにする, emojiで増減がわかりやすくする
-# :arrow_up:
-# :arrow_upper_right:
-# :arrow_right:
-# :arrow_lower_right:
-# :arrow_down:
-# TODO:リファクタリング
